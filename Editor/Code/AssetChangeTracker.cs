@@ -22,7 +22,7 @@ public class AssetChangeTracker : AssetPostprocessor {
     return Path.GetFullPath(osPath);
   }
 
-  static string UnityPathToOSPath(string path) {
+  public static string UnityPathToOSPath(string path) {
     return path.Replace('/', Path.DirectorySeparatorChar);
   }
 }

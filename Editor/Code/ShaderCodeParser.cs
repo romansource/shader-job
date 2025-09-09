@@ -15,7 +15,7 @@ public static class ShaderCodeParser {
       .Where(LooksLikeLambdaInvocation);
 
     return calls.Select(x => new ValueTuple<InvocationExpressionSyntax, string, int>(x,
-      x.ArgumentList.Arguments.Last().Expression.ToFullString().Trim(),
+      SyntaxFactory.ParseExpression(x.ArgumentList.Arguments.Last().Expression.ToFullString().Trim()).NormalizeWhitespace().ToFullString(),
       x.GetLocation().GetLineSpan().StartLinePosition.Line + 1));
   }
 

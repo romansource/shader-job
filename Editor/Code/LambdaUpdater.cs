@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using UnityEditor;
 using UnityEditor.Compilation;
+using UnityEngine;
 
 [InitializeOnLoad]
 public static class LambdaUpdater {
@@ -42,6 +43,7 @@ public static class LambdaUpdater {
             else {
               // REMOVE SHADER AS NOT NEEDED
              map.LambdaLocationToShaderId.RemoveAll(x => x.value ==  oldShaderIdAtLocation);
+             map.LambdaTextToShaderId.RemoveAll(x => x.value ==  oldShaderIdAtLocation);
              FileUtil.DeleteFileOrDirectory(Path.Combine("Assets/Resources/Generated/Computes/", oldShaderIdAtLocation + ".compute"));
              FileUtil.DeleteFileOrDirectory(Path.Combine("Assets/Resources/Generated/Computes/", $"ComputeBInding_{oldShaderIdAtLocation}.cs"));
             }
@@ -67,13 +69,15 @@ public static class LambdaUpdater {
       }
 
       // clear unused in file parse
-      foreach (var entry in map.LambdaLocationToShaderId.Where(x => x.key.filePath == file && calls.All(y => y.line != x.key.line))) {
+      foreach (var entry in map.LambdaLocationToShaderId.Where(x => x.key.filePath == ShaderJob.NormalizePath(file) && calls.All(y => y.line != x.key.line)).ToList()) {
         if (map.LambdaLocationToShaderId.Count(x => x.value == entry.value) > 1) {
           map.LambdaLocationToShaderId.Remove(entry);
         }
         else {
           map.LambdaLocationToShaderId.RemoveAll(x => x.value == entry.value);
           map.LambdaTextToShaderId.RemoveAll(x => x.value == entry.value);
+          FileUtil.DeleteFileOrDirectory(Path.Combine("Assets/Resources/Generated/Computes/", entry.value + ".compute"));
+          FileUtil.DeleteFileOrDirectory(Path.Combine("Assets/Resources/Generated/Computes/", $"ComputeBInding_{entry.value}.cs"));
         }
       }
     }
@@ -86,8 +90,8 @@ public static class LambdaUpdater {
 
   private static void ClearRemoved(SerializableShaderMap map) {
     foreach (var file in AssetChangeTracker.Removed) {
-      var shaderId = map.LambdaLocationToShaderId.Find(x => x.key.filePath == file).value;
-
+      var shaderId = map.LambdaLocationToShaderId.Find(x => x.key.filePath == file)?.value;
+      
       if (map.LambdaLocationToShaderId.Count(x => x.value == shaderId) <= 1) {
         map.LambdaLocationToShaderId.RemoveAll(x => x.value == shaderId);
         map.LambdaTextToShaderId.RemoveAll(x => x.value == shaderId);
