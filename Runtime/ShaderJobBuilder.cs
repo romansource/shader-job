@@ -7,7 +7,7 @@ public readonly struct ShaderJobBuilder {
   private readonly int _yCount;
   private readonly int _zCount;
 
-  public ShaderJobBuilder(int xCount, int yCount = -1, int zCount = -1) {
+  public ShaderJobBuilder(int xCount, int yCount = 1, int zCount = 1) {
     _xCount = xCount;
     _yCount = yCount;
     _zCount = zCount;

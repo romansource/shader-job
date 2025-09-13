@@ -6,16 +6,14 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 public static class Generator {
-  public static (string hlsl, string binderText) GenerateTexts(SyntaxTree tree, InvocationExpressionSyntax call, int id) {
+  public static (string hlsl, string binderText) GenerateTexts(SyntaxTree tree, InvocationExpressionSyntax call, int id, DispatchDims dimensions) {
     var lambda = GetLambda(call);
     var model = GetModel(call, tree);
     (string Name, ITypeSymbol Type)[] parameters = ResolveLambdaParametersFromCall(call, lambda, model);
-    // foreach (var p in parameters)
-    //   UnityEngine.Debug.Log($"{p.Name} : {p.Type?.ToDisplayString() ?? "<null>"}");
 
     var writtenBuffers = AnalyzeUsageByName(lambda, parameters);
-    var hlsl = ShaderGenerator.GenerateHlsl(lambda, parameters, writtenBuffers);
-    var binderText = BinderGenerator.GenerateBinder(id, parameters, writtenBuffers, parameters.Count(p => p.Type is IArrayTypeSymbol));
+    var hlsl = ShaderGenerator.GenerateHlsl(lambda, parameters, writtenBuffers, dimensions);
+    var binderText = BinderGenerator.GenerateBinder(id, parameters, writtenBuffers, parameters.Count(p => p.Type is IArrayTypeSymbol), dimensions);
 
     return (hlsl, binderText);
   }

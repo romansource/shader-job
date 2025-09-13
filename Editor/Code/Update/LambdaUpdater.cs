@@ -61,7 +61,7 @@ public static class LambdaUpdater {
             newShaderId = Enumerable.Range(0, takenIds.Count + 1).First(n => !takenIds.Contains(n));
           }
 
-          var generated = Generator.GenerateTexts(syntaxTree, lambda.invocation, newShaderId);
+          var generated = Generator.GenerateTexts(syntaxTree, lambda.invocation, newShaderId, lambda.dimensions);
           map.LambdaTextToShaderId.Add(new TextToIdEntry { key = lambda.lambda, value = newShaderId });
           map.LambdaLocationToShaderId.Add(new LocationToIdEntry { key = lambdaLocation, value = newShaderId });
           FileCreator.CreateComputeShaderFile(newShaderId.ToString(), generated.hlsl, generated.binderText);

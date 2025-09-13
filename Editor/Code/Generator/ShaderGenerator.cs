@@ -6,12 +6,14 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 public static class ShaderGenerator {
-  public static string GenerateHlsl(LambdaExpressionSyntax lambda, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers) {
+  public static string GenerateHlsl(LambdaExpressionSyntax lambda, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, DispatchDims dimensions) {
     var sb = new StringBuilder();
     sb.AppendLine("// Auto-generated HLSL");
     sb.AppendLine("#pragma kernel CSMain");
     sb.AppendLine();
-
+    
+    sb.AppendLine("int3 _Dimensions;");
+    
     var scalarParams = new List<string>();
     foreach (var (name, type) in parameters) {
       if (type == null) {
@@ -50,11 +52,20 @@ public static class ShaderGenerator {
       sb.AppendLine($"{hlslType} {name};");
     }
 
+    var groupSize = dimensions.GetThreadGroupSize();
+    
     sb.AppendLine();
-    sb.AppendLine("[numthreads(64,1,1)]");
+    sb.AppendLine($"[numthreads({groupSize.X},{groupSize.Y},{groupSize.Z})]");
     sb.AppendLine("void CSMain(uint3 id : SV_DispatchThreadID)");
     sb.AppendLine("{");
 
+    if (dimensions.Z > 1)
+      sb.AppendLine("    if (id.x >= _Dimensions.x || id.y >= _Dimensions.y || id.z >= _Dimensions.z) return;");
+    else if (dimensions.Y > 1)
+      sb.AppendLine("    if (id.x >= _Dimensions.x || id.y >= _Dimensions.y) return;");
+    else
+      sb.AppendLine("    if (id.x >= _Dimensions.x) return;");
+      
     var visitor = new HlslEmitter(parameters);
     string body = visitor.Visit(lambda.Body);
 
