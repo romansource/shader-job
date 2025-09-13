@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using System.IO;
 
-public static class ComputeShaderGenerator {
+public static class FileCreator {
   public const string folderPath = "Assets/Resources/Generated/Computes/";
 
   public static void CreateComputeShaderFile(string shaderName, string shaderCode, string binderCode) {

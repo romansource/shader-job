@@ -18,10 +18,10 @@ public static class LambdaUpdater {
     foreach (var file in AssetChangeTracker.Updated.ToList()) {
       var asset = File.ReadAllText(file);
       var syntaxTree = CSharpSyntaxTree.ParseText(asset);
-      var calls = ShaderCodeParser.GetLambdaInvocations(syntaxTree).GroupBy(x => x.line).Select(g => g.First()).ToList();
+      var calls = LambdaParser.GetLambdaInvocations(syntaxTree).GroupBy(x => x.line).Select(g => g.First()).ToList();
       
       foreach (var lambda in calls) {
-        var lambdaLocation = new LambdaLocation { filePath = ShaderJob.NormalizePath(file), line = lambda.line };
+        var lambdaLocation = new LambdaLocation { filePath = ShaderJobBuilder.NormalizePath(file), line = lambda.line };
 
         var shaderIdFromText = map.LambdaTextToShaderId.FirstOrDefault(x => x.key == lambda.lambda)?.value;
         if (shaderIdFromText != null) {
@@ -61,15 +61,15 @@ public static class LambdaUpdater {
             newShaderId = Enumerable.Range(0, takenIds.Count + 1).First(n => !takenIds.Contains(n));
           }
 
-          var generated = ShaderCodeParser.GenerateTexts(syntaxTree, lambda.invocation, newShaderId);
+          var generated = Generator.GenerateTexts(syntaxTree, lambda.invocation, newShaderId);
           map.LambdaTextToShaderId.Add(new TextToIdEntry { key = lambda.lambda, value = newShaderId });
           map.LambdaLocationToShaderId.Add(new LocationToIdEntry { key = lambdaLocation, value = newShaderId });
-          ComputeShaderGenerator.CreateComputeShaderFile(newShaderId.ToString(), generated.hlsl, generated.binderText);
+          FileCreator.CreateComputeShaderFile(newShaderId.ToString(), generated.hlsl, generated.binderText);
         }
       }
 
       // clear unused in file parse
-      foreach (var entry in map.LambdaLocationToShaderId.Where(x => x.key.filePath == ShaderJob.NormalizePath(file) && calls.All(y => y.line != x.key.line)).ToList()) {
+      foreach (var entry in map.LambdaLocationToShaderId.Where(x => x.key.filePath == ShaderJobBuilder.NormalizePath(file) && calls.All(y => y.line != x.key.line)).ToList()) {
         if (map.LambdaLocationToShaderId.Count(x => x.value == entry.value) > 1) {
           map.LambdaLocationToShaderId.Remove(entry);
         }
