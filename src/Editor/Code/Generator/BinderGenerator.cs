@@ -4,12 +4,13 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 
 public static class BinderGenerator {
-  public static string GenerateBinder(int shaderId, int binderId, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, int bufferCount, DispatchDims dispatchDims) {
+  public static string GenerateBinder(int id, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, DispatchDims dispatchDims) {
     var realParameters = parameters
       .Where(p => p.Type != null)
       .ToArray();
 
     var typeArgs = string.Join(", ", realParameters.Select(p => p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)));
+    var arrayBufferCount = realParameters.Count(p => p.Type is IArrayTypeSymbol);
     
     var binderBody = new StringBuilder();
     int bufferIndex = 0;
@@ -29,12 +30,7 @@ public static class BinderGenerator {
       }
     }
     
-    if (dispatchDims.Z > 1)
-      binderBody.Append($"    shader.SetInts(\"_Dimensions\", {dispatchDims.X}, {dispatchDims.Y}, {dispatchDims.Z});");
-    else if (dispatchDims.Y > 1)
-      binderBody.Append($"    shader.SetInts(\"_Dimensions\", {dispatchDims.X}, {dispatchDims.Y});");
-    else 
-      binderBody.Append($"    shader.SetInts(\"_Dimensions\", {dispatchDims.X});");
+    binderBody.AppendLine(DimensionsSetCall(dispatchDims));
     
     var updaterBody = new StringBuilder();
     bufferIndex = 0;
@@ -50,21 +46,20 @@ public static class BinderGenerator {
     
     return $@"using UnityEngine;
 
-public static class ComputeBinding_{binderId}
+public static class ComputeBinding_{id}
 {{
-  static ComputeBuffer[] buffers = new ComputeBuffer[{bufferCount}];
+  static ComputeBuffer[] buffers = new ComputeBuffer[{arrayBufferCount}];
 
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
   static void Init()
   {{
     ShaderRegistry.Register<{typeArgs}>(
-      key: {binderId},
-      resourcesPath: ""Generated/Computes/{shaderId}"",
+      key: {id},
+      resourcesPath: ""Generated/Computes/{id}"",
       binder: Binder,
       updater: Updater,
       kernelIndex: 0,
-      dispatchGroups: () => ({groupCount.X},{groupCount.Y},{groupCount.Z}),
-      bufferCount: {bufferCount});
+      dispatchGroups: () => ({groupCount.X},{groupCount.Y},{groupCount.Z}));
   }}
 
   private static void Binder(ComputeShader shader, int kernel, {string.Join(", ", realParameters.Select(p => p.Type.ToDisplayString() + " " + p.Name))})
@@ -77,5 +72,13 @@ public static class ComputeBinding_{binderId}
 {updaterBody}  }}
 }}
 ";
+  }
+
+  private static string DimensionsSetCall(DispatchDims dims) {
+    if (dims.Z > 1)
+      return $"    shader.SetInts(\"_Dimensions\", {dims.X}, {dims.Y}, {dims.Z});";
+    if (dims.Y > 1)
+      return $"    shader.SetInts(\"_Dimensions\", {dims.X}, {dims.Y});";
+    return $"    shader.SetInts(\"_Dimensions\", {dims.X});";
   }
 }

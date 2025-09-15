@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-public static class LambdaParser 
+public class LambdaParser 
 {
   public static IEnumerable<(InvocationExpressionSyntax invocation, string lambda, int line, DispatchDims dimensions)> GetLambdaInvocations(SyntaxTree tree) 
   {
@@ -25,7 +25,7 @@ public static class LambdaParser
     });
   }
   
-  private static DispatchDims ExtractForDimensions(InvocationExpressionSyntax runInvocation)
+  public static DispatchDims ExtractForDimensions(InvocationExpressionSyntax runInvocation)
   {
     try
     {

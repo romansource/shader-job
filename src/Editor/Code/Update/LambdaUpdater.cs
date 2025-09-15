@@ -88,7 +88,7 @@ public static class LambdaUpdater {
               // New invocation at this location: allocate new shaderId and binderId
               var newShaderId = map.LambdaLocationToShaderId.FreeId();
               var binderId = map.LambdaLocationToBinderId.FreeId();
-              var generated = Generator.GenerateTexts(syntaxTree, lambda.invocation, newShaderId, binderId, lambda.dimensions);
+              var generated = Generator.GenerateTexts(syntaxTree, lambda.invocation, newShaderId, lambda.dimensions);
               map.LambdaLocationToShaderId.Add(new LocationToId { key = lambdaLocation, value = newShaderId });
               map.LambdaLocationToBinderId.Add(new LocationToId { key = lambdaLocation, value = binderId });
               FileCreator.CreateComputeShaderFile(newShaderId, generated.hlsl);
@@ -108,7 +108,7 @@ public static class LambdaUpdater {
               }
               var hlsl = Generator.GenerateShader(syntaxTree, lambda.invocation, lambda.dimensions);
               FileCreator.CreateComputeShaderFile(shaderId, hlsl);
-              var binder = Generator.GenerateBinder(syntaxTree, lambda.invocation, shaderId, binderId, lambda.dimensions);
+              var binder = Generator.GenerateBinder(syntaxTree, lambda.invocation, shaderId, lambda.dimensions);
               FileCreator.CreateBinderFile(binderId, binder);
             }
           }

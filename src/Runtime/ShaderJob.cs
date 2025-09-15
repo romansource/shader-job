@@ -1,13 +1,10 @@
+using JetBrains.Annotations;
+
 public static class ShaderJob {
-  public static ShaderJobBuilder For(int x) {
-    return new ShaderJobBuilder(x);
-  }
-
-  public static ShaderJobBuilder For(int x, int y) {
-    return new ShaderJobBuilder(x, y);
-  }
-
-  public static ShaderJobBuilder For(int x, int y, int z) {
-    return new ShaderJobBuilder(x, y, z);
-  }
+  /// Used by parser LambdaParser.ExtractForDimensions in Editor
+  public static ShaderJobBuilder For([UsedImplicitly] int x) => new();
+  /// Used by parser LambdaParser.ExtractForDimensions in Editor
+  public static ShaderJobBuilder For([UsedImplicitly]int x, [UsedImplicitly]int y) => new();
+  /// Used by parser LambdaParser.ExtractForDimensions in Editor
+  public static ShaderJobBuilder For([UsedImplicitly]int x, [UsedImplicitly]int y, [UsedImplicitly]int z) => new();
 }
