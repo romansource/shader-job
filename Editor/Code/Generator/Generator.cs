@@ -6,16 +6,35 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 public static class Generator {
-  public static (string hlsl, string binderText) GenerateTexts(SyntaxTree tree, InvocationExpressionSyntax call, int id, DispatchDims dimensions) {
+  public static (string hlsl, string binderText) GenerateTexts(SyntaxTree tree, InvocationExpressionSyntax call, int shaderId, int binderId, DispatchDims dimensions) {
     var lambda = GetLambda(call);
     var model = GetModel(call, tree);
     (string Name, ITypeSymbol Type)[] parameters = ResolveLambdaParametersFromCall(call, lambda, model);
 
     var writtenBuffers = AnalyzeUsageByName(lambda, parameters);
     var hlsl = ShaderGenerator.GenerateHlsl(lambda, parameters, writtenBuffers, dimensions);
-    var binderText = BinderGenerator.GenerateBinder(id, parameters, writtenBuffers, parameters.Count(p => p.Type is IArrayTypeSymbol), dimensions);
+    var binderText = BinderGenerator.GenerateBinder(shaderId, binderId, parameters, writtenBuffers, parameters.Count(p => p.Type is IArrayTypeSymbol), dimensions);
 
     return (hlsl, binderText);
+  }
+
+  public static string GenerateShader(SyntaxTree tree, InvocationExpressionSyntax call, DispatchDims dimensions) {
+    var lambda = GetLambda(call);
+    var model = GetModel(call, tree);
+    (string Name, ITypeSymbol Type)[] parameters = ResolveLambdaParametersFromCall(call, lambda, model);
+    var writtenBuffers = AnalyzeUsageByName(lambda, parameters);
+    
+    return ShaderGenerator.GenerateHlsl(lambda, parameters, writtenBuffers, dimensions);
+  }
+
+  public static string GenerateBinder(SyntaxTree tree, InvocationExpressionSyntax call, int shaderId, int binderId, DispatchDims dimensions) {
+    var lambda = GetLambda(call);
+    var model = GetModel(call, tree);
+    (string Name, ITypeSymbol Type)[] parameters = ResolveLambdaParametersFromCall(call, lambda, model);
+    var writtenBuffers = AnalyzeUsageByName(lambda, parameters);
+    var binderText = BinderGenerator.GenerateBinder(shaderId, binderId, parameters, writtenBuffers, parameters.Count(p => p.Type is IArrayTypeSymbol), dimensions);
+
+    return binderText;
   }
 
   private static LambdaExpressionSyntax GetLambda(InvocationExpressionSyntax call) =>

@@ -57,20 +57,14 @@ public struct LambdaLocation : IEquatable<LambdaLocation> {
 }
 
 [Serializable]
-public class LocationToIdEntry {
+public class LocationToId {
   public LambdaLocation key;
-  public int value;
-}
-
-[Serializable]
-public class TextToIdEntry {
-  public string key;
   public int value;
 }
 
 [Serializable]
 public class SerializableShaderMap
 {
-  public List<TextToIdEntry> LambdaTextToShaderId = new();
-  public List<LocationToIdEntry> LambdaLocationToShaderId = new();
+  public List<LocationToId> LambdaLocationToShaderId = new();
+  public List<LocationToId> LambdaLocationToBinderId = new();
 }

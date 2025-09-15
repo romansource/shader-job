@@ -4,14 +4,17 @@ using System.IO;
 public static class FileCreator {
   public const string folderPath = "Assets/Resources/Generated/Computes/";
 
-  public static void CreateComputeShaderFile(string shaderName, string shaderCode, string binderCode) {
+  public static void CreateComputeShaderFile(int shaderId, string shaderCode) {
     Directory.CreateDirectory(folderPath);
-
-    var shaderPath = Path.Combine(folderPath, shaderName + ".compute");
-    var binderPath = Path.Combine(folderPath, $"ComputeBinding_{shaderName}.cs");
+    var shaderPath = Path.Combine(folderPath, shaderId + ".compute");
     File.WriteAllText(shaderPath, shaderCode);
-    File.WriteAllText(binderPath, binderCode);
     AssetDatabase.ImportAsset(shaderPath);
+  }
+  
+  public static void CreateBinderFile(int binderId, string binderCode) {
+    Directory.CreateDirectory(folderPath);
+    var binderPath = Path.Combine(folderPath, $"ComputeBinding_{binderId}.cs");
+    File.WriteAllText(binderPath, binderCode);
     AssetDatabase.ImportAsset(binderPath);
   }
 }

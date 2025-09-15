@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 
 public static class BinderGenerator {
-  public static string GenerateBinder(int shaderId, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, int bufferCount, DispatchDims dispatchDims) {
+  public static string GenerateBinder(int shaderId, int binderId, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, int bufferCount, DispatchDims dispatchDims) {
     var realParameters = parameters
       .Where(p => p.Type != null)
       .ToArray();
@@ -50,7 +50,7 @@ public static class BinderGenerator {
     
     return $@"using UnityEngine;
 
-public static class ComputeBinding_{shaderId}
+public static class ComputeBinding_{binderId}
 {{
     static ComputeBuffer[] buffers = new ComputeBuffer[{bufferCount}];
 
@@ -58,7 +58,7 @@ public static class ComputeBinding_{shaderId}
     static void Init()
     {{
         ShaderRegistry.Register<{typeArgs}>(
-            key: {shaderId},
+            key: {binderId},
             resourcesPath: ""Generated/Computes/{shaderId}"",
             binder: Binder,
             updater: Updater,

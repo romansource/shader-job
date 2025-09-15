@@ -18,12 +18,12 @@ public readonly struct ShaderJobBuilder {
     [CallerLineNumber] int callerLine = 0) {
     var storage = ShaderMapStorage.Load();
     var loc = new LambdaLocation { filePath = NormalizePath(callerFile), line = callerLine };
-    var shaderEntry = storage.LambdaLocationToShaderId.Find(x => x.key.Equals(loc));
+    var binderId = storage.LambdaLocationToBinderId.Find(x => x.key.Equals(loc));
 
-    if (shaderEntry == null)
+    if (binderId == null)
       throw new InvalidOperationException($"No shader for lambda {NormalizePath(callerFile)}:{callerLine}");
 
-    var entry = ShaderRegistry.Get2<T1, T2>(shaderEntry.value);
+    var entry = ShaderRegistry.Get2<T1, T2>(binderId.value);
 
     var shader = entry.LoadShader();
     var kernelIndex = entry.Kernel;
@@ -41,12 +41,12 @@ public readonly struct ShaderJobBuilder {
     [CallerLineNumber] int callerLine = 0) {
     var storage = ShaderMapStorage.Load();
     var loc = new LambdaLocation { filePath = NormalizePath(callerFile), line = callerLine };
-    var shaderEntry = storage.LambdaLocationToShaderId.Find(x => x.key.Equals(loc));
+    var binderId = storage.LambdaLocationToBinderId.Find(x => x.key.Equals(loc));
 
-    if (shaderEntry == null)
+    if (binderId == null)
       throw new InvalidOperationException($"No shader for lambda {NormalizePath(callerFile)}:{callerLine}");
 
-    var entry = ShaderRegistry.Get3<T1, T2, T3>(shaderEntry.value);
+    var entry = ShaderRegistry.Get3<T1, T2, T3>(binderId.value);
 
     var shader = entry.LoadShader();
     var kernelIndex = entry.Kernel;

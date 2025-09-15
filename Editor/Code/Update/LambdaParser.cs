@@ -17,7 +17,9 @@ public static class LambdaParser
 
     return calls.Select(x => {
       var lambda = ExtractLambdaExpression(x);
-      var line = x.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+      var line = x.Expression is MemberAccessExpressionSyntax ma && IsRunIdentifier(ma.Name) 
+          ? ma.Name.GetLocation().GetLineSpan().StartLinePosition.Line + 1
+          : x.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
       var dimensions = ExtractForDimensions(x);
       return (x, lambda, line, dimensions);
     });
