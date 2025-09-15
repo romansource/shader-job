@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using UnityEditor;
-using UnityEditor.Compilation;
 using UnityEngine;
 
 [InitializeOnLoad]
