@@ -114,13 +114,13 @@ You keep the ergonomics of C# while getting the performance of GPU compute.
 - “Compute shaders not supported”
     - Confirm your target platform/GPU supports compute and the graphics API is set accordingly in Project Settings.
 
-## Details
-[Roadmap](https://github.com/romansource/shader-job/blob/main/Documentation~/ROADMAP.md)
+##  Details
+📋 [Roadmap](https://github.com/romansource/shader-job/blob/main/Documentation~/ROADMAP.md)
 
- [MIT License](https://github.com/romansource/shader-job/blob/main/LICENSE.md)
+📋 [MIT License](https://github.com/romansource/shader-job/blob/main/LICENSE.md)
 
- [View Changelog](https://github.com/romansource/shader-job/blob/main/Documentation~/CHANGELOG.md)
+📋 [View Changelog](https://github.com/romansource/shader-job/blob/main/Documentation~/CHANGELOG.md)
 
 ## Contact info
 
- romansourcemail@gmail.com
+✉ romansourcemail@gmail.com
