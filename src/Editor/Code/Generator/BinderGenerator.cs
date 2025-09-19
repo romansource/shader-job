@@ -45,7 +45,7 @@ namespace RomanSource.ShaderJob.Editor {
       updaterBody.AppendLine("    foreach (var b in buffers) b.Dispose();");
       var groupCount = dispatchDims.GetThreadGroupCount();
 
-      return $@"using ShaderJob;
+      return $@"using RomanSource.ShaderJob;
 using UnityEngine;
 
 public static class ComputeBinding_{id}

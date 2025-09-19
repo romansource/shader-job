@@ -4,15 +4,20 @@ using UnityEngine;
 
 namespace RomanSource.ShaderJob {
   [Serializable]
-  public struct LambdaLocation {
+  public struct LambdaLocation : IEquatable<LambdaLocation> {
     public string filePath;
     public int line;
 
     public override bool Equals(object obj) =>
-      obj is LambdaLocation other && string.Equals(filePath, other.filePath, StringComparison.OrdinalIgnoreCase) && line == other.line;
+      obj is LambdaLocation other
+      && string.Equals(filePath, other.filePath, StringComparison.OrdinalIgnoreCase)
+      && line == other.line;
 
     public override int GetHashCode() =>
       ((filePath?.ToLowerInvariant().GetHashCode() ?? 0) * 397) ^ line;
+
+    public bool Equals(LambdaLocation other) =>
+      filePath == other.filePath && line == other.line;
   }
 
   [CreateAssetMenu(menuName = "ShaderJob/ShaderMap")]
@@ -29,11 +34,19 @@ namespace RomanSource.ShaderJob {
     [SerializeField] private List<string> textValues = new();
 
     public void OnBeforeSerialize() {
-      shaderIdKeys.Clear(); shaderIdValues.Clear();
-      foreach (var kv in LambdaLocationToShaderId) { shaderIdKeys.Add(kv.Key); shaderIdValues.Add(kv.Value); }
+      shaderIdKeys.Clear();
+      shaderIdValues.Clear();
+      foreach (var kv in LambdaLocationToShaderId) {
+        shaderIdKeys.Add(kv.Key);
+        shaderIdValues.Add(kv.Value);
+      }
 
-      textKeys.Clear(); textValues.Clear();
-      foreach (var kv in LambdaLocationToText) { textKeys.Add(kv.Key); textValues.Add(kv.Value); }
+      textKeys.Clear();
+      textValues.Clear();
+      foreach (var kv in LambdaLocationToText) {
+        textKeys.Add(kv.Key);
+        textValues.Add(kv.Value);
+      }
     }
 
     public void OnAfterDeserialize() {
