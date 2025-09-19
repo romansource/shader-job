@@ -117,9 +117,9 @@ You keep the ergonomics of C# while getting the performance of GPU compute.
 ##  Details
 📋 [Roadmap](https://github.com/romansource/shader-job/blob/main/Documentation~/ROADMAP.md)
 
-📋 [MIT License](https://github.com/romansource/shader-job/blob/main/LICENSE.md)
+📋 [Changelog](https://github.com/romansource/shader-job/blob/main/Documentation~/CHANGELOG.md)
 
-📋 [View Changelog](https://github.com/romansource/shader-job/blob/main/Documentation~/CHANGELOG.md)
+📋 [MIT License](https://github.com/romansource/shader-job/blob/main/LICENSE.md)
 
 ## Contact info
 
