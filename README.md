@@ -53,6 +53,7 @@ public class Example1D : MonoBehaviour
     for (int i = 0; i < src.Length; i++) src[i] = i;
 
     // Dispatch 20 threads (x dimension)
+    // .Run accepts some lambda args to lower GC pressure by using static delegates
     ShaderJob.For(20).Run(src, dst, (input, output, id) =>
     {
       // id.x is in [0..19]
@@ -77,13 +78,15 @@ ShaderJob.For(16, 9).Run(src, dst, (input, output, id) =>
 3D dispatch:
 ``` csharp
 // 3D grid: (gx, gy, gz)
-ShaderJob.For(4, 4, 8).Run(a, b, c, (a1, a2, a3, id) =>
+ShaderJob.For(4, 4, 8).Run(input, output, a, b, (source, dist, const1, const2, id) =>
 {
-  // id.z in [0..7]
-  int width = 4;
-  int height = 4;
-  int idx = id.z + id.y * 8 + id.x * 8 * height;
-  // Do something with a1/a2/a3...
+  int temp = source[id.x];
+  for(int i; i < 32; i++)
+  {
+    // id.z in [0..7]
+    temp = ((temp ^ id.x) + (temp * const1) - const2 * id.z;
+  }
+  dist[id.x] = temp;
 });
 ```
 
