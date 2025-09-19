@@ -21,7 +21,7 @@ Performs GPU calculations via editor-time generated compute shaders from provide
 Option A — Add via Package Manager UI
 1. Open Window → Package Manager.
 2. Click the + button → Add package from git URL...
-3. Paste: [https://github.com/romansource/shader-job.git](https://github.com/romansource/shader-job.git)
+3. Paste: [https://github.com/romansource/shader-job.git?path=src](https://github.com/romansource/shader-job.git?path=src)
 
 Option B — manifest.json Add this to your Packages/manifest.json:
 ``` json
