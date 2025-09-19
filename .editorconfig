@@ -1,0 +1,45 @@
+# Top-level EditorConfig
+root = true
+
+[*.cs]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Styles
+dotnet_naming_style.s_camel_case.required_prefix = s_
+dotnet_naming_style.s_camel_case.capitalization = camel_case
+dotnet_naming_style._camel_case.required_prefix = _
+dotnet_naming_style._camel_case.capitalization = camel_case
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+# Symbols
+dotnet_naming_symbols.private_static_fields.applicable_kinds = field
+dotnet_naming_symbols.private_static_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_static_fields.required_modifiers = static
+
+dotnet_naming_symbols.private_instance_fields.applicable_kinds = field
+dotnet_naming_symbols.private_instance_fields.applicable_accessibilities = private
+
+dotnet_naming_symbols.constants_all.applicable_kinds = field
+dotnet_naming_symbols.constants_all.required_modifiers = const
+
+# Rules
+dotnet_naming_rule.private_static_fields_s_camel.symbols = private_static_fields
+dotnet_naming_rule.private_static_fields_s_camel.style = s_camel_case
+dotnet_naming_rule.private_static_fields_s_camel.severity = suggestion
+
+dotnet_naming_rule.private_instance_fields__camel.symbols = private_instance_fields
+dotnet_naming_rule.private_instance_fields__camel.style = _camel_case
+dotnet_naming_rule.private_instance_fields__camel.severity = suggestion
+
+dotnet_naming_rule.constants_pascal.symbols = constants_all
+dotnet_naming_rule.constants_pascal.style = pascal_case
+dotnet_naming_rule.constants_pascal.severity = suggestion
+
+# Keep namespace as-is without folder/location warnings
+[*.cs]
+resharper_inconsistent_namespace_highlighting = none

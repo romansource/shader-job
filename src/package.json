@@ -1,16 +1,35 @@
 {
-  "name": "com.romansource.shaderjob",
+  "name": "io.github.romansource.shaderjob",
   "version": "0.0.1",
   "displayName": "ShaderJob",
   "description": "Performs GPU calculations via editor-time generated compute shaders from provided C# lambdas.",
   "dependencies": {
-    "com.unity.nuget.newtonsoft-json": "3.0.2"
+    "com.unity.addressables": "2.7.3"
   },
-  "unity": "6.0",
+  "unity": "6000.0",
   "author": {
     "name": "Roman Tolstov",
     "email": "romansourcemail@gmail.com"
   },
-  "keywords": ["editor", "compute", "shader", "generator", "roslyn"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/romansource/shader-job.git"
+  },
+  "keywords": [
+    "editor",
+    "unity",
+    "tool",
+    "compute",
+    "compute-shader",
+    "compute-shaders",
+    "gpu",
+    "gpgpu",
+    "hlsl",
+    "shaderlab",
+    "codegen",
+    "source-generator",
+    "roslyn",
+    "lambdas"
+  ],
   "type": "tool"
 }

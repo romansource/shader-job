@@ -3,48 +3,50 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 
-public static class BinderGenerator {
-  public static string GenerateBinder(int id, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, DispatchDims dispatchDims) {
-    var realParameters = parameters
-      .Where(p => p.Type != null)
-      .ToArray();
+namespace ShaderJob.Editor {
+  public static class BinderGenerator {
+    public static string GenerateBinder(int id, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, DispatchDims dispatchDims) {
+      var realParameters = parameters
+        .Where(p => p.Type != null)
+        .ToArray();
 
-    var typeArgs = string.Join(", ", realParameters.Select(p => p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)));
-    var arrayBufferCount = realParameters.Count(p => p.Type is IArrayTypeSymbol);
-    
-    var binderBody = new StringBuilder();
-    int bufferIndex = 0;
-    foreach (var p in realParameters) {
-      if (p.Type is IArrayTypeSymbol arrType) {
-        var elemType = arrType.ElementType.ToDisplayString();
-        binderBody.AppendLine(
-          $@"    buffers[{bufferIndex}] = new ComputeBuffer({p.Name}.Length, System.Runtime.InteropServices.Marshal.SizeOf<{elemType}>());
+      var typeArgs = string.Join(", ", realParameters.Select(p => p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)));
+      var arrayBufferCount = realParameters.Count(p => p.Type is IArrayTypeSymbol);
+
+      var binderBody = new StringBuilder();
+      int bufferIndex = 0;
+      foreach (var p in realParameters) {
+        if (p.Type is IArrayTypeSymbol arrType) {
+          var elemType = arrType.ElementType.ToDisplayString();
+          binderBody.AppendLine(
+            $@"    buffers[{bufferIndex}] = new ComputeBuffer({p.Name}.Length, System.Runtime.InteropServices.Marshal.SizeOf<{elemType}>());
     buffers[{bufferIndex}].SetData({p.Name});
     shader.SetBuffer(kernel, ""{p.Name}"", buffers[{bufferIndex}]);
 ");
-        bufferIndex++;
+          bufferIndex++;
+        }
+        else {
+          // handle scalars/constants
+          binderBody.AppendLine($@"    shader.SetInt(""{p.Name}"", {p.Name});");
+        }
       }
-      else {
-        // TODO: handle scalars/constants
-        binderBody.AppendLine($@"    shader.SetInt(""{p.Name}"", {p.Name});");
-      }
-    }
-    
-    binderBody.AppendLine(DimensionsSetCall(dispatchDims));
-    
-    var updaterBody = new StringBuilder();
-    bufferIndex = 0;
-    foreach (var p in realParameters) {
-      if (p.Type is IArrayTypeSymbol && writtenBuffers.Contains(p.Name)) {
-        updaterBody.AppendLine($"    buffers[{bufferIndex}].GetData({p.Name});");
-        bufferIndex++;
-      }
-    }
 
-    updaterBody.AppendLine("    foreach (var b in buffers) b.Dispose();");
-    var groupCount = dispatchDims.GetThreadGroupCount();
-    
-    return $@"using UnityEngine;
+      binderBody.AppendLine(DimensionsSetCall(dispatchDims));
+
+      var updaterBody = new StringBuilder();
+      bufferIndex = 0;
+      foreach (var p in realParameters) {
+        if (p.Type is IArrayTypeSymbol && writtenBuffers.Contains(p.Name)) {
+          updaterBody.AppendLine($"    buffers[{bufferIndex}].GetData({p.Name});");
+          bufferIndex++;
+        }
+      }
+
+      updaterBody.AppendLine("    foreach (var b in buffers) b.Dispose();");
+      var groupCount = dispatchDims.GetThreadGroupCount();
+
+      return $@"using ShaderJob;
+using UnityEngine;
 
 public static class ComputeBinding_{id}
 {{
@@ -66,19 +68,20 @@ public static class ComputeBinding_{id}
   {{
 {binderBody}
   }}
-  
+
   private static void Updater({string.Join(", ", realParameters.Select(p => p.Type.ToDisplayString() + " " + p.Name))})
-  {{ 
+  {{
 {updaterBody}  }}
 }}
 ";
-  }
+    }
 
-  private static string DimensionsSetCall(DispatchDims dims) {
-    if (dims.Z > 1)
-      return $"    shader.SetInts(\"_Dimensions\", {dims.X}, {dims.Y}, {dims.Z});";
-    if (dims.Y > 1)
-      return $"    shader.SetInts(\"_Dimensions\", {dims.X}, {dims.Y});";
-    return $"    shader.SetInts(\"_Dimensions\", {dims.X});";
+    private static string DimensionsSetCall(DispatchDims dims) {
+      if (dims.Z > 1)
+        return $"    shader.SetInts(\"_DispatchSize\", {dims.X}, {dims.Y}, {dims.Z});";
+      if (dims.Y > 1)
+        return $"    shader.SetInts(\"_DispatchSize\", {dims.X}, {dims.Y});";
+      return $"    shader.SetInts(\"_DispatchSize\", {dims.X});";
+    }
   }
 }

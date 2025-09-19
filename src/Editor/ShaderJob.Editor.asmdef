@@ -1,8 +1,10 @@
 {
-    "name": "romansource.shaderjob.editor",
-    "rootNamespace": "Romansource.ShaderJob.Editor",
+    "name": "ShaderJob.Editor",
+    "rootNamespace": "ShaderJob.Editor",
     "references": [
-        "romansource.shaderjob.runtime"
+        "GUID:69448af7b92c7f342b298e06a37122aa",
+        "GUID:84651a3751eca9349aac36a66bba901b",
+        "GUID:d25648d5863a6fd4facfb1a8e8b41736"
     ],
     "includePlatforms": [
         "Editor"
