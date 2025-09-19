@@ -29,7 +29,6 @@ namespace ShaderJob.Editor {
       if (AddressableAssetSettingsDefaultObject.Settings != null)
         return;
 
-      Debug.Log("Initializing Addressables...");
       AddressableAssetSettings.Create(
         AddressableAssetSettingsDefaultObject.kDefaultConfigFolder,
         AddressableAssetSettingsDefaultObject.kDefaultConfigAssetName,
@@ -45,7 +44,6 @@ namespace ShaderJob.Editor {
 
       var existingAsset = AssetDatabase.LoadAssetAtPath<ShaderMap>(ShaderMapPath);
       if (existingAsset != null) {
-        Debug.Log("ShaderMap already exists, using existing asset.");
         return existingAsset;
       }
 
@@ -53,14 +51,12 @@ namespace ShaderJob.Editor {
       AssetDatabase.CreateAsset(shaderMap, ShaderMapPath);
       AssetDatabase.SaveAssets();
 
-      Debug.Log($"Created ShaderMap at: {ShaderMapPath}");
       return shaderMap;
     }
 
     private static void MakeShaderMapAddressable(ShaderMap shaderMap) {
       var settings = AddressableAssetSettingsDefaultObject.Settings;
       if (settings == null) {
-        Debug.LogError("Addressable settings not found!");
         return;
       }
 
@@ -69,7 +65,7 @@ namespace ShaderJob.Editor {
       string guid = AssetDatabase.AssetPathToGUID(ShaderMapPath);
       var entry = settings.FindAssetEntry(guid);
 
-      var desiredAddress = ShaderJobAddresses.ShaderMap;
+      const string desiredAddress = ShaderJobAddresses.ShaderMap;
 
       if (entry == null) {
         entry = settings.CreateOrMoveEntry(guid, group, false, false);
@@ -99,27 +95,10 @@ namespace ShaderJob.Editor {
       }
 
       var newGroup = settings.CreateGroup(GroupName, false, false, true, null,
-        typeof(ContentUpdateGroupSchema), typeof(BundledAssetGroupSchema));
+        typeof(ContentUpdateGroupSchema),
+        typeof(BundledAssetGroupSchema));
 
-      Debug.Log($"Created Addressables group: {GroupName}");
       return newGroup;
     }
-
-    public static void AddShaderToMap(Shader shader) {
-      if (!IsSystemSetup())
-        SetupShaderJobSystem();
-
-      var shaderMap = AssetDatabase.LoadAssetAtPath<ShaderMap>(ShaderMapPath);
-      if (shaderMap != null) {
-        //TODO: shaderMap.AddShader(shader);
-        EditorUtility.SetDirty(shaderMap);
-        AssetDatabase.SaveAssets();
-      }
-      else {
-        Debug.LogWarning("ShaderMap not found. Run Tools/ShaderJob/Setup System first.");
-      }
-    }
-
-    private static bool IsSystemSetup() => AssetDatabase.LoadAssetAtPath<ShaderMap>(ShaderMapPath) != null;
   }
 }
