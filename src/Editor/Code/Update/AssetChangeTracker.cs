@@ -3,7 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace ShaderJob.Editor {
+namespace RomanSource.ShaderJob.Editor {
   public class AssetChangeTracker : AssetPostprocessor {
     public static List<string> Updated = new();
     public static List<string> Removed = new();

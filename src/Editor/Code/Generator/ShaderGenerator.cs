@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace ShaderJob.Editor {
+namespace RomanSource.ShaderJob.Editor {
   public static class ShaderGenerator {
     public static string GenerateHlsl(LambdaExpressionSyntax lambda, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, DispatchDims dimensions) {
       var sb = new StringBuilder();

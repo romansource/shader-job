@@ -1,4 +1,4 @@
-namespace ShaderJob.Editor {
+namespace RomanSource.ShaderJob.Editor {
   public class DispatchDims {
     public readonly int X;
     public readonly int Y;

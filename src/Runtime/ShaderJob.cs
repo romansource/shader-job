@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace ShaderJob {
+namespace RomanSource.ShaderJob {
   public static class ShaderJob {
     /// Used by parser LambdaParser.ExtractForDimensions in Editor
     public static ShaderJobBuilder For([UsedImplicitly] int x) => new();

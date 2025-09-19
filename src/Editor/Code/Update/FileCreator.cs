@@ -5,7 +5,7 @@ using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 
-namespace ShaderJob.Editor {
+namespace RomanSource.ShaderJob.Editor {
   public static class FileCreator {
     public const string FolderPath = "Assets/ShaderJob/";
     private const string GroupName = "ShaderJob Assets";

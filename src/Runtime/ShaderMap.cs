@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ShaderJob {
+namespace RomanSource.ShaderJob {
   [Serializable]
   public struct LambdaLocation {
     public string filePath;

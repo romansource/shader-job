@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace ShaderJob {
+namespace RomanSource.ShaderJob {
   public static partial class ShaderRegistry {
     public abstract class EntryBase {
       public readonly string Path;

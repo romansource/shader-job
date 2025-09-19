@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace ShaderJob {
+namespace RomanSource.ShaderJob {
   public readonly struct ShaderJobBuilder {
     private static ShaderMap s_shaderMap;
     private static readonly object s_mapLock = new();

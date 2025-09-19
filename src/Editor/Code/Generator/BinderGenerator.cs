@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 
-namespace ShaderJob.Editor {
+namespace RomanSource.ShaderJob.Editor {
   public static class BinderGenerator {
     public static string GenerateBinder(int id, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, DispatchDims dispatchDims) {
       var realParameters = parameters

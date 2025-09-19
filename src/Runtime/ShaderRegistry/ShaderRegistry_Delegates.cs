@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ShaderJob {
+namespace RomanSource.ShaderJob {
   public static partial class ShaderRegistry {
     public delegate void ShaderBinder<T1>(ComputeShader shader, int kernel, T1 arg1);
     public delegate void ShaderBinder<T1, T2>(ComputeShader shader, int kernel, T1 arg1, T2 arg2);

@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace ShaderJob.Editor {
+namespace RomanSource.ShaderJob.Editor {
   public static class LambdaParser
   {
     public static IEnumerable<(InvocationExpressionSyntax invocation, string lambda, int line, DispatchDims dimensions)> GetLambdaInvocations(SyntaxTree tree)

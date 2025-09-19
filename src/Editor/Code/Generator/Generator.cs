@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace ShaderJob.Editor {
+namespace RomanSource.ShaderJob.Editor {
   public static class Generator {
     public static (string hlsl, string binderText) GenerateTexts(SyntaxTree tree, InvocationExpressionSyntax call, int id, DispatchDims dimensions) {
       var lambda = GetLambda(call);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ShaderJob {
+namespace RomanSource.ShaderJob {
   public static partial class ShaderRegistry
   {
     // Each entry is stored as 'object' but retrieved via exact generic arity.

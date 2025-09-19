@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace ShaderJob.Editor {
+namespace RomanSource.ShaderJob.Editor {
   internal class HlslEmitter : CSharpSyntaxVisitor<string> {
     public HlslEmitter((string Name, ITypeSymbol Type)[] parameters) {
       parameters.Select(p => p.Name).ToHashSet();

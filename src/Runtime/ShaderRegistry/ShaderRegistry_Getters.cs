@@ -1,4 +1,4 @@
-﻿namespace ShaderJob {
+﻿namespace RomanSource.ShaderJob {
   public static partial class ShaderRegistry {
     public static Entry1<T1> Get1<T1>(int key) => (Entry1<T1>)Map[key];
     public static Entry2<T1, T2> Get2<T1, T2>(int key) => (Entry2<T1, T2>)Map[key];

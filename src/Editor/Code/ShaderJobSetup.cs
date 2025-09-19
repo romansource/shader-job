@@ -1,11 +1,12 @@
 ﻿using System.IO;
+using RomanSource.ShaderJob;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
 
-namespace ShaderJob.Editor {
+namespace RomanSource.ShaderJob.Editor {
   public static class ShaderJobSetup {
     private const string ShaderMapPath = "Assets/ShaderJob/ShaderMap.asset";
     private const string GroupName = "ShaderJob Assets";

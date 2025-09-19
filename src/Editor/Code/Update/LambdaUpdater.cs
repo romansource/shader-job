@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
+using RomanSource.ShaderJob;
 using UnityEditor;
 using UnityEngine;
 
-namespace ShaderJob.Editor {
+namespace RomanSource.ShaderJob.Editor {
   [InitializeOnLoad]
   public static class LambdaUpdater {
     private static bool s_pendingUpdate;
