@@ -32,10 +32,9 @@ Option B — manifest.json Add this to your Packages/manifest.json:
 }
 ```
 After installation:
-- Addressables will be added automatically. If you plan to make a Player build, open Window → Asset Management → Addressables → Groups and Build → New Build → Default Build Script to generate content. 
-- Rebuild when you change kernels/lambdas that affect generated assets.
-
-- In Editor, Addressables can pull from the Asset Database directly. In a Player, assets must be packed into Addressables content, hence the build step.
+- Addressables will be added automatically. If you plan to make a Player build, open Window → Asset Management → Addressables → Groups and Build → New Build → Default Build Script to generate content.
+ 
+> **Note:** Rebuild when you change kernels/lambdas that affect generated assets. In Editor, Addressables can pull from the Asset Database directly. In a Player, assets must be packed into Addressables content, hence the build step.
 
 
 ## Quick start
