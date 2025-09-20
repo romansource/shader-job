@@ -14,7 +14,9 @@ namespace RomanSource.ShaderJob.Editor {
       var arrayBufferCount = realParameters.Count(p => p.Type is IArrayTypeSymbol);
 
       var binderBody = new StringBuilder();
-      int bufferIndex = 0;
+      var bufferIndex = 0;
+      var arrayNameToIndex = new Dictionary<string, int>();
+
       foreach (var p in realParameters) {
         if (p.Type is IArrayTypeSymbol arrType) {
           var elemType = arrType.ElementType.ToDisplayString();
@@ -23,6 +25,7 @@ namespace RomanSource.ShaderJob.Editor {
     buffers[{bufferIndex}].SetData({p.Name});
     shader.SetBuffer(kernel, ""{p.Name}"", buffers[{bufferIndex}]);
 ");
+          arrayNameToIndex[p.Name] = bufferIndex;
           bufferIndex++;
         }
         else {
@@ -37,7 +40,7 @@ namespace RomanSource.ShaderJob.Editor {
       bufferIndex = 0;
       foreach (var p in realParameters) {
         if (p.Type is IArrayTypeSymbol && writtenBuffers.Contains(p.Name)) {
-          updaterBody.AppendLine($"    buffers[{bufferIndex}].GetData({p.Name});");
+          updaterBody.AppendLine($"    buffers[{arrayNameToIndex[p.Name]}].GetData({p.Name});");
           bufferIndex++;
         }
       }
