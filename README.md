@@ -21,7 +21,7 @@ Performs GPU calculations via editor-time generated compute shaders from provide
 Option A — Add via Package Manager UI
 1. Open Window → Package Manager.
 2. Click the + button → Add package from git URL...
-3. Paste: [https://github.com/romansource/shader-job.git](https://github.com/romansource/shader-job.git)
+3. Paste: [https://github.com/romansource/shader-job.git?path=src](https://github.com/romansource/shader-job.git?path=src)
 
 Option B — manifest.json Add this to your Packages/manifest.json:
 ``` json
@@ -32,10 +32,9 @@ Option B — manifest.json Add this to your Packages/manifest.json:
 }
 ```
 After installation:
-- Addressables will be added automatically. If you plan to make a Player build, open Window → Asset Management → Addressables → Groups and Build → New Build → Default Build Script to generate content. 
-- Rebuild when you change kernels/lambdas that affect generated assets.
-
-- In Editor, Addressables can pull from the Asset Database directly. In a Player, assets must be packed into Addressables content, hence the build step.
+- Addressables will be added automatically. If you plan to make a Player build, open Window → Asset Management → Addressables → Groups and Build → New Build → Default Build Script to generate content.
+ 
+> **Note:** Rebuild when you change kernels/lambdas that affect generated assets. In Editor, Addressables can pull from the Asset Database directly. In a Player, assets must be packed into Addressables content, hence the build step.
 
 
 ## Quick start
@@ -53,6 +52,7 @@ public class Example1D : MonoBehaviour
     for (int i = 0; i < src.Length; i++) src[i] = i;
 
     // Dispatch 20 threads (x dimension)
+    // .Run accepts some lambda args to lower GC pressure by using static delegates
     ShaderJob.For(20).Run(src, dst, (input, output, id) =>
     {
       // id.x is in [0..19]
@@ -77,13 +77,15 @@ ShaderJob.For(16, 9).Run(src, dst, (input, output, id) =>
 3D dispatch:
 ``` csharp
 // 3D grid: (gx, gy, gz)
-ShaderJob.For(4, 4, 8).Run(a, b, c, (a1, a2, a3, id) =>
+ShaderJob.For(4, 4, 8).Run(input, output, a, b, (source, dist, const1, const2, id) =>
 {
-  // id.z in [0..7]
-  int width = 4;
-  int height = 4;
-  int idx = id.z + id.y * 8 + id.x * 8 * height;
-  // Do something with a1/a2/a3...
+  int temp = source[id.x];
+  for(int i; i < 32; i++)
+  {
+    // id.z in [0..7]
+    temp = ((temp ^ id.x) + (temp * const1) - const2 * id.z;
+  }
+  dist[id.x] = temp;
 });
 ```
 
@@ -110,3 +112,14 @@ You keep the ergonomics of C# while getting the performance of GPU compute.
 
 - “Compute shaders not supported”
     - Confirm your target platform/GPU supports compute and the graphics API is set accordingly in Project Settings.
+
+##  Details
+📋 [Roadmap](https://github.com/romansource/shader-job/blob/main/Documentation~/ROADMAP.md)
+
+📋 [Changelog](https://github.com/romansource/shader-job/blob/main/Documentation~/CHANGELOG.md)
+
+📋 [MIT License](https://github.com/romansource/shader-job/blob/main/LICENSE.md)
+
+## Contact info
+
+✉ romansourcemail@gmail.com
