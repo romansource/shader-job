@@ -1,6 +1,6 @@
 {
   "name": "io.github.romansource.shaderjob",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "displayName": "ShaderJob",
   "description": "Performs GPU calculations via editor-time generated compute shaders from provided C# lambdas.",
   "dependencies": {
