@@ -104,6 +104,9 @@ You keep the ergonomics of C# while getting the performance of GPU compute.
 - Use the appropriate For(x), For(x, y) or For(x, y, z) shape to match your data layout to thread IDs.
 - Build Addressables content before making a Player build, so the generated shaders are included.
 - If you rename files or move code around, do a domain reload/recompile (commonly on Ctrl+S) so generation stays in sync.
+- The primary performance bottleneck is the CPU-GPU data transfer overhead, which is roughly the same for any number of elements (dispatch groups internally). So don't be shy to use big For(…) loop numbers, in my case that was 50k.
+- Currently, the For(…) method does not support variable arguments, only numbers.
+- Type Inference Limitation: Currently, the system has limited type inference capabilities. Please be explicit with type declarations, such as `int[] source = new[] { 1, 2, 3 };`
 
 ## Troubleshooting
 - “Nothing happens / output unchanged”
