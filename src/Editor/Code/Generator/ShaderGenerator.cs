@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace RomanSource.ShaderJob.Editor {
   public static class ShaderGenerator {
-    public static string GenerateHlsl(LambdaExpressionSyntax lambda, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, DispatchDims dimensions) {
+    public static string GenerateHlsl(LambdaExpressionSyntax lambda, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, int dimensions) {
       var sb = new StringBuilder();
       sb.AppendLine("// Auto-generated HLSL");
       sb.AppendLine("#pragma kernel CSMain");
@@ -53,16 +53,16 @@ namespace RomanSource.ShaderJob.Editor {
         sb.AppendLine($"{hlslType} {name};");
       }
 
-      var groupSize = dimensions.GetThreadGroupSize();
+      var groupSize = DispatchDims.GetThreadGroupSize(dimensions);
 
       sb.AppendLine();
       sb.AppendLine($"[numthreads({groupSize.X},{groupSize.Y},{groupSize.Z})]");
       sb.AppendLine("void CSMain(uint3 id : SV_DispatchThreadID)");
       sb.AppendLine("{");
 
-      if (dimensions.Z > 1)
+      if (dimensions == 3)
         sb.AppendLine("    if (id.x >= _DispatchSize.x || id.y >= _DispatchSize.y || id.z >= _DispatchSize.z) return;");
-      else if (dimensions.Y > 1)
+      else if (dimensions == 2)
         sb.AppendLine("    if (id.x >= _DispatchSize.x || id.y >= _DispatchSize.y) return;");
       else
         sb.AppendLine("    if (id.x >= _DispatchSize.x) return;");

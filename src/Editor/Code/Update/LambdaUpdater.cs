@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
-using RomanSource.ShaderJob;
 using UnityEditor;
 using UnityEngine;
 
@@ -93,14 +92,16 @@ namespace RomanSource.ShaderJob.Editor {
 
                 // Case: existing entry but lambda text changed — regenerate shader and binder
                 var id = map.LambdaLocationToShaderId[lambdaLocation];
-                var generated = Generator.GenerateTexts(syntaxTree, lambda.invocation, id, lambda.dimensions);
+                var dimensions = LambdaParser.GetForArgumentCount(lambda.invocation);
+                var generated = Generator.GenerateTexts(syntaxTree, lambda.invocation, id, dimensions);
                 FileCreator.CreateComputeShaderFile(id, generated.hlsl);
                 FileCreator.CreateBinderFile(id, generated.binderText);
               }
               else {
                 // Case: no entry yet at this location — create initial shader and binder
                 var freeId = map.LambdaLocationToShaderId.FreeId();
-                var generated = Generator.GenerateTexts(syntaxTree, lambda.invocation, freeId, lambda.dimensions);
+                var dimensions = LambdaParser.GetForArgumentCount(lambda.invocation);
+                var generated = Generator.GenerateTexts(syntaxTree, lambda.invocation, freeId, dimensions);
                 map.LambdaLocationToShaderId[lambdaLocation] = freeId;
                 map.LambdaLocationToText[lambdaLocation] = lambda.lambda;
                 FileCreator.CreateComputeShaderFile(freeId, generated.hlsl);

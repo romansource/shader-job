@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 
 namespace RomanSource.ShaderJob.Editor {
   public static class BinderGenerator {
-    public static string GenerateBinder(int id, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers, DispatchDims dispatchDims) {
+    public static string GenerateBinder(int id, (string Name, ITypeSymbol Type)[] parameters, HashSet<string> writtenBuffers) {
       var realParameters = parameters
         .Where(p => p.Type != null)
         .ToArray();
@@ -34,7 +34,13 @@ namespace RomanSource.ShaderJob.Editor {
         }
       }
 
-      binderBody.AppendLine(DimensionsSetCall(dispatchDims));
+      binderBody.AppendLine(
+@"    if (dispatchDims.Z > 1)
+      shader.SetInts(""_DispatchSize"", dispatchDims.X, dispatchDims.Y, dispatchDims.Z);
+    else if (dispatchDims.Y > 1)
+      shader.SetInts(""_DispatchSize"", dispatchDims.X, dispatchDims.Y);
+    else
+      shader.SetInts(""_DispatchSize"", dispatchDims.X);");
 
       var updaterBody = new StringBuilder();
       bufferIndex = 0;
@@ -46,7 +52,6 @@ namespace RomanSource.ShaderJob.Editor {
       }
 
       updaterBody.AppendLine("    foreach (var b in buffers) b.Dispose();");
-      var groupCount = dispatchDims.GetThreadGroupCount();
 
       return $@"using RomanSource.ShaderJob;
 using UnityEngine;
@@ -63,28 +68,18 @@ public static class ComputeBinding_{id}
       resourcesPath: ""Generated/Computes/{id}"",
       binder: Binder,
       updater: Updater,
-      kernelIndex: 0,
-      dispatchGroups: () => ({groupCount.X},{groupCount.Y},{groupCount.Z}));
+      kernelIndex: 0);
   }}
 
-  private static void Binder(ComputeShader shader, int kernel, {string.Join(", ", realParameters.Select(p => p.Type.ToDisplayString() + " " + p.Name))})
+  private static void Binder(ComputeShader shader, int kernel, in DispatchDims dispatchDims, {string.Join(", ", realParameters.Select(p => p.Type.ToDisplayString() + " " + p.Name))})
   {{
-{binderBody}
-  }}
+{binderBody}  }}
 
   private static void Updater({string.Join(", ", realParameters.Select(p => p.Type.ToDisplayString() + " " + p.Name))})
   {{
 {updaterBody}  }}
 }}
 ";
-    }
-
-    private static string DimensionsSetCall(DispatchDims dims) {
-      if (dims.Z > 1)
-        return $"    shader.SetInts(\"_DispatchSize\", {dims.X}, {dims.Y}, {dims.Z});";
-      if (dims.Y > 1)
-        return $"    shader.SetInts(\"_DispatchSize\", {dims.X}, {dims.Y});";
-      return $"    shader.SetInts(\"_DispatchSize\", {dims.X});";
     }
   }
 }

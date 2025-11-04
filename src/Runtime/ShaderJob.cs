@@ -1,12 +1,7 @@
-using JetBrains.Annotations;
-
 namespace RomanSource.ShaderJob {
   public static class ShaderJob {
-    /// Used by parser LambdaParser.ExtractForDimensions in Editor
-    public static ShaderJobBuilder For([UsedImplicitly] int x) => new();
-    /// Used by parser LambdaParser.ExtractForDimensions in Editor
-    public static ShaderJobBuilder For([UsedImplicitly]int x, [UsedImplicitly]int y) => new();
-    /// Used by parser LambdaParser.ExtractForDimensions in Editor
-    public static ShaderJobBuilder For([UsedImplicitly]int x, [UsedImplicitly]int y, [UsedImplicitly]int z) => new();
+    public static ShaderJobBuilder For(int x) => new(x);
+    public static ShaderJobBuilder For(int x, int y) => new(x, y);
+    public static ShaderJobBuilder For(int x, int y, int z) => new(x, y, z);
   }
 }

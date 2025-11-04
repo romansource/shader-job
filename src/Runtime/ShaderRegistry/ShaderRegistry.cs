@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RomanSource.ShaderJob {
   public static partial class ShaderRegistry
@@ -12,40 +11,36 @@ namespace RomanSource.ShaderJob {
       string resourcesPath,
       ShaderBinder<T1> binder,
       ShaderUpdater<T1> updater,
-      int kernelIndex,
-      Func<(int x,int y,int z)> dispatchGroups)
+      int kernelIndex)
     {
-      Map[key] = new Entry1<T1>(resourcesPath, binder, updater, kernelIndex, dispatchGroups);
+      Map[key] = new Entry1<T1>(resourcesPath, binder, updater, kernelIndex);
     }
 
     public static void Register<T1,T2>(
       int key, string resourcesPath,
       ShaderBinder<T1,T2> binder,
       ShaderUpdater<T1,T2> updater,
-      int kernelIndex,
-      Func<(int,int,int)> dispatchGroups)
+      int kernelIndex)
     {
-      Map[key] = new Entry2<T1,T2>(resourcesPath, binder, updater, kernelIndex, dispatchGroups);
+      Map[key] = new Entry2<T1,T2>(resourcesPath, binder, updater, kernelIndex);
     }
 
     public static void Register<T1,T2,T3>(
       int key, string resourcesPath,
       ShaderBinder<T1,T2,T3> binder,
       ShaderUpdater<T1,T2,T3> updater,
-      int kernelIndex,
-      Func<(int,int,int)> dispatchGroups)
+      int kernelIndex)
     {
-      Map[key] = new Entry3<T1,T2,T3>(resourcesPath, binder, updater, kernelIndex, dispatchGroups);
+      Map[key] = new Entry3<T1,T2,T3>(resourcesPath, binder, updater, kernelIndex);
     }
 
     public static void Register<T1,T2,T3,T4>(
       int key, string resourcesPath,
       ShaderBinder<T1,T2,T3,T4> binder,
       ShaderUpdater<T1,T2,T3,T4> updater,
-      int kernelIndex,
-      Func<(int,int,int)> dispatchGroups)
+      int kernelIndex)
     {
-      Map[key] = new Entry4<T1,T2,T3,T4>(resourcesPath, binder, updater, kernelIndex, dispatchGroups);
+      Map[key] = new Entry4<T1,T2,T3,T4>(resourcesPath, binder, updater, kernelIndex);
     }
   }
 }

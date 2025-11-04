@@ -9,6 +9,11 @@ namespace RomanSource.ShaderJob {
   public readonly struct ShaderJobBuilder {
     private static ShaderMap s_shaderMap;
     private static readonly object s_mapLock = new();
+    private readonly DispatchDims _dim;
+
+    public ShaderJobBuilder(int x, int y = 1, int z = 1) {
+      _dim = new DispatchDims(x, y, z);
+    }
 
     public void Run<T1>(T1 a1, Action<T1, Vector3Int> kernel, [CallerFilePath] string callerFile = "", [CallerLineNumber] int callerLine = 0) {
       var binderId = RetrieveShaderId(callerFile, callerLine);
@@ -26,8 +31,8 @@ namespace RomanSource.ShaderJob {
 
       try {
         var kernelIndex = entry.Kernel;
-        var (gx, gy, gz) = entry.Groups();
-        entry.Binder(shader, kernelIndex, a1);
+        var (gx, gy, gz) = _dim.GetThreadGroupCount();
+        entry.Binder(shader, kernelIndex, _dim, a1);
         shader.Dispatch(kernelIndex, gx, gy, gz);
         entry.Updater(a1);
       }
@@ -52,8 +57,8 @@ namespace RomanSource.ShaderJob {
 
       try {
         var kernelIndex = entry.Kernel;
-        var (gx, gy, gz) = entry.Groups();
-        entry.Binder(shader, kernelIndex, a1, a2);
+        var (gx, gy, gz) = _dim.GetThreadGroupCount();
+        entry.Binder(shader, kernelIndex, _dim, a1, a2);
         shader.Dispatch(kernelIndex, gx, gy, gz);
         entry.Updater(a1, a2);
       }
@@ -78,8 +83,8 @@ namespace RomanSource.ShaderJob {
 
       try {
         var kernelIndex = entry.Kernel;
-        var (gx, gy, gz) = entry.Groups();
-        entry.Binder(shader, kernelIndex, a1, a2, a3);
+        var (gx, gy, gz) = _dim.GetThreadGroupCount();
+        entry.Binder(shader, kernelIndex, _dim, a1, a2, a3);
         shader.Dispatch(kernelIndex, gx, gy, gz);
         entry.Updater(a1, a2, a3);
       }
@@ -104,8 +109,8 @@ namespace RomanSource.ShaderJob {
 
       try {
         var kernelIndex = entry.Kernel;
-        var (gx, gy, gz) = entry.Groups();
-        entry.Binder(shader, kernelIndex, a1, a2, a3, a4);
+        var (gx, gy, gz) = _dim.GetThreadGroupCount();
+        entry.Binder(shader, kernelIndex, _dim, a1, a2, a3, a4);
         shader.Dispatch(kernelIndex, gx, gy, gz);
         entry.Updater(a1, a2, a3, a4);;
       }

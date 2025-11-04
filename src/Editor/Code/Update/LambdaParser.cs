@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace RomanSource.ShaderJob.Editor {
   public static class LambdaParser
   {
-    public static IEnumerable<(InvocationExpressionSyntax invocation, string lambda, int line, DispatchDims dimensions)> GetLambdaInvocations(SyntaxTree tree)
+    public static IEnumerable<(InvocationExpressionSyntax invocation, string lambda, int line)> GetLambdaInvocations(SyntaxTree tree)
     {
       var root = tree.GetRoot();
 
@@ -21,75 +20,33 @@ namespace RomanSource.ShaderJob.Editor {
         var line = x.Expression is MemberAccessExpressionSyntax ma && IsRunIdentifier(ma.Name)
           ? ma.Name.GetLocation().GetLineSpan().StartLinePosition.Line + 1
           : x.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
-        var dimensions = ExtractForDimensions(x);
-        return (x, lambda, line, dimensions);
+
+        return (x, lambda, line);
       });
     }
 
-    public static DispatchDims ExtractForDimensions(InvocationExpressionSyntax runInvocation)
-    {
-      try
-      {
-        // Look for ShaderJob.For(...).Run(...) pattern
-        if (runInvocation.Expression is MemberAccessExpressionSyntax ma)
-        {
-          // Check if the expression is an invocation (the For(...) call)
-          if (ma.Expression is InvocationExpressionSyntax forInvocation)
-          {
-            // Verify this is a For method call
-            if (forInvocation.Expression is MemberAccessExpressionSyntax forMa &&
-                IsForIdentifier(forMa.Name))
-            {
-              return ExtractDimensionsFromArguments(forInvocation.ArgumentList?.Arguments);
+    public static int GetForArgumentCount(InvocationExpressionSyntax invocation) {
+      // Walk up the expression tree to find ShaderJob.For(...)
+      var current = invocation.Expression;
+
+      while (current != null) {
+        if (current is MemberAccessExpressionSyntax ma) {
+          // Check if this is a .Run() call
+          if (IsRunIdentifier(ma.Name) && ma.Expression is InvocationExpressionSyntax forInvocation) {
+            // Check if the invocation is ShaderJob.For(...)
+            if (forInvocation.Expression is MemberAccessExpressionSyntax forMa && IsForIdentifier(forMa.Name)) {
+              return forInvocation.ArgumentList?.Arguments.Count ?? 1;
             }
           }
+          current = ma.Expression;
         }
-
-        // Default dimensions if no For(...) found
-        return new DispatchDims(1, 1, 1);
-      }
-      catch
-      {
-        return new DispatchDims(1, 1, 1);
-      }
-    }
-
-    private static DispatchDims ExtractDimensionsFromArguments(SeparatedSyntaxList<ArgumentSyntax>? arguments)
-    {
-      if (arguments == null || arguments.Value.Count == 0)
-        return new DispatchDims(1, 1, 1);
-
-      var args = arguments.Value;
-      var dimensions = new int[] { 1, 1, 1 };
-
-      for (int i = 0; i < Math.Min(3, args.Count); i++)
-      {
-        if (TryExtractIntegerLiteral(args[i].Expression, out int value))
-        {
-          dimensions[i] = value;
+        else {
+          break;
         }
       }
 
-      return new DispatchDims(dimensions[0], dimensions[1], dimensions[2]);
-    }
-
-    private static bool TryExtractIntegerLiteral(ExpressionSyntax expr, out int value)
-    {
-      value = 0;
-
-      switch (expr)
-      {
-        case LiteralExpressionSyntax literal when literal.Token.IsKind(SyntaxKind.NumericLiteralToken):
-          return int.TryParse(literal.Token.ValueText, out value);
-
-        case IdentifierNameSyntax identifier:
-          // For variables, we can't resolve the value at parse time
-          // You might want to use semantic model here if needed
-          return false;
-
-        default:
-          return false;
-      }
+      UnityEngine.Debug.LogWarning("Could not determine for argument count");
+      return 1;
     }
 
     private static string ExtractLambdaExpression(InvocationExpressionSyntax invocation)
